@@ -1,6 +1,6 @@
-# not anymore :D
+#not anymore :D
 from node import *
-from algs import BFS
+from algs import BFS, DFS
 import pygame
 import random
 
@@ -36,15 +36,16 @@ def convert(n):
     return (i, j)
 
 turned = False
-visited = []
-path = []
 pnodes = []
 graphMaker(numOfNodes)
 goal = [None, None, None]
-start = pygame.Rect((200, Height/2 - 100), (75, 50))
-startText = smallfont.render('Start' , True , (0,0,0))
-end  = pygame.Rect((200, Height/2 + 100), (75, 50))
-endText = smallfont.render('Reset' , True , (0,0,0))
+visited = 0
+BFSR = pygame.Rect((200, Height/2 - 100), (75, 50))
+BFSText = smallfont.render('BFS' , True , (0,0,0))
+DFSR = pygame.Rect((200, Height/2), (75, 50))
+DFSText = smallfont.render('DFS' , True , (0,0,0))
+reset = pygame.Rect((200, Height/2 + 100), (75, 50))
+resetText = smallfont.render('Reset' , True , (0,0,0))
 FPS = 120
 
 running = True
@@ -56,41 +57,58 @@ while running:
     
     screen.fill((25,25,25))
     if len(pnodes) > 0:
-        color = (random.randint(40, 175), random.randint(40, 175), random.randint(40, 175))
-        if pnodes[0] == -1:
+        g = random.randint(30, 150)
+        r = random.randint(30, 175)
+        b = random.randint(30, 175)
+        color = (r, g, b)
+        if pnodes[0] == True:
             if len(pnodes[1]) > 0:
                 nodes[pnodes[1].pop(0)].color = color
-            
             elif len(pnodes[2]) > 0:
                 nodes[pnodes[2].pop()].color = Green
+                if len(pnodes[2] == 0):
+                    turned = False
         else:
             nodes[pnodes.pop(0)].color = color
-        
+
+    elif len(pnodes) == 0:
+        turned = False
+    
+    visitedNodesText = smallfont.render(f'Visited nodes: {visited}' , True , (0,0,0))
+
     x, y = pygame.mouse.get_pos()
     state = pygame.mouse.get_pressed()
 
     if 200 <= x <= 275 and (Height/2 - 100) <= y <= (Height/2 - 50) and not turned: 
-        pygame.draw.rect(screen, (50,255,50), start)
+        pygame.draw.rect(screen, (50,255,50), BFSR)
         if state[0] == True:
             turned = True
             pnodes = BFS(goal[0], goal[1], numOfNodes, nodes)#path nodes
-            print(len(pnodes))
-    
     else:
-        pygame.draw.rect(screen, (255,255,255), start)
+        pygame.draw.rect(screen, (255,255,255), BFSR)
+    
+    if 200 <= x <= 275 and (Height/2) <= y <= (Height/2 + 50) and not turned: 
+        pygame.draw.rect(screen, (50,255,50), DFSR)
+        if state[0] == True:
+            turned = True
+            pnodes = DFS(goal[0], goal[1], numOfNodes, nodes)#path nodes
+    else:
+        pygame.draw.rect(screen, (255,255,255), DFSR)
+
     if 200 <= x <= 275 and (Height/2 + 100) <= y <= (Height/2 + 150): 
-        pygame.draw.rect(screen, (255,50,50), end)
+        pygame.draw.rect(screen, (255,50,50), reset)
         if state[0] == True:
             goal = [None, None, None]
             turned = False
-            path = list()
-            visited = list()
+            pnodes = []
             graphMaker(numOfNodes)
     else:
-        pygame.draw.rect(screen, (255,255,255), end)
+        pygame.draw.rect(screen, (255,255,255), reset)
     
-    screen.blit(startText, (200, Height/2 - 100))
-    screen.blit(endText, ((200, Height/2 + 100)))
+    screen.blit(BFSText, (200, Height/2 - 100))
+    screen.blit(DFSText, (200, Height/2))
+    screen.blit(resetText, ((200, Height/2 + 100)))
+
     if not turned:
         if Width/2-((numOfNodes/2)*26)<=x<=Width/2+(numOfNodes/2)*26 and Height/2-((numOfNodes/2)*26)<=y<=Height/2+(numOfNodes/2)*26:
             if state[2] == True:
@@ -103,6 +121,7 @@ while running:
                     nodes[goal[1]].color = Blue
             if state[0] == True:
                 nodes[convert((x,y))].color = Black
+    
     for i in range(numOfNodes):
         for j in range(numOfNodes):
             pygame.draw.rect(screen, nodes[(i,j)].color, nodes[(i,j)].rect)
