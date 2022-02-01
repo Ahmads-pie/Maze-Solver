@@ -56,14 +56,15 @@ while running:
     
     screen.fill((25,25,25))
     if len(pnodes) > 0:
+        color = (random.randint(40, 175), random.randint(40, 175), random.randint(40, 175))
         if pnodes[0] == -1:
             if len(pnodes[1]) > 0:
-                nodes[pnodes[1].pop(0)].color = (random.randint(30,150),random.randint(30,150),random.randint(30,150))
+                nodes[pnodes[1].pop(0)].color = color
             
             elif len(pnodes[2]) > 0:
                 nodes[pnodes[2].pop()].color = Green
         else:
-            nodes[pnodes.pop(0)].color = (random.randint(30,150),random.randint(30,150),random.randint(30,150))
+            nodes[pnodes.pop(0)].color = color
         
     x, y = pygame.mouse.get_pos()
     state = pygame.mouse.get_pressed()
@@ -99,9 +100,9 @@ while running:
                     nodes[goal[0]].color = Green
                 elif goal[1] == None and convert((x,y)) != goal[0]:
                     goal[1] = convert((x,y))
-                    nodes[goal[1]].color = (20,20, 255)
+                    nodes[goal[1]].color = Blue
             if state[0] == True:
-                nodes[convert((x,y))].color = (0,0,0)
+                nodes[convert((x,y))].color = Black
     for i in range(numOfNodes):
         for j in range(numOfNodes):
             pygame.draw.rect(screen, nodes[(i,j)].color, nodes[(i,j)].rect)
