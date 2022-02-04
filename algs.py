@@ -91,4 +91,4 @@ def DFS_maze(o_numOfNodes, o_nodes):
                 queue.append(neighbor)
                 maze.append((sign(node[0]-neighbor[0])+(neighbor[0]), sign(node[1]-neighbor[1])+neighbor[1]))
                 maze.append(neighbor)
-    return maze
+    return maze, len(maze)
