@@ -1,6 +1,6 @@
 #not anymore :D
 from node import *
-from algs import BFS, DFS
+from algs import *
 import pygame
 import random
 
@@ -98,7 +98,7 @@ while running:
         pygame.draw.rect(screen, (50,255,50), DFSR)
         if state[0] == True:
             turned = True
-            pnodes = DFS(goal[0], goal[1], numOfNodes, nodes)#path nodes
+            pnodes = DFS_maze( numOfNodes, nodes)#path nodes goal[0], goal[1],
             reset_(numOfNodes)
 
     else:
