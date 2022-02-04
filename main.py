@@ -73,11 +73,10 @@ while running:
 
     if len(mnodes) > 0:
         nodes[mnodes.pop(0)].color = White
-    if len(pnodes) > 0:
-        g = random.randint(30, 150)
-        r = random.randint(30, 175)
-        b = random.randint(30, 175)
-        color = (r, g, b)
+    if len(pnodes) > 0: 
+        colors = [(100,15,74), (154, 10, 30), (245, 139, 36), (227, 100, 20), (15, 76, 92), (55, 94, 151), (245, 101, 66), (245, 187, 10)]
+        color = random.choice(colors)
+        color = (random.randint(-10, 10)+color[0], random.randint(-10, 10)+color[1], random.randint(-10, 10)+color[2])
         if pnodes[0] == True:
             if len(pnodes[1]) > 0:
                 nodes[pnodes[1].pop(0)].color = color
@@ -126,6 +125,7 @@ while running:
             turned = False
             visited = 0
             pnodes = []
+            mnodes = []
             graphMaker(numOfNodes)
     else:
         pygame.draw.rect(screen, White, reset)
@@ -135,7 +135,7 @@ while running:
         if state[0] == True:
             goal = [None, None, None]
             mnodes = DFS_maze(numOfNodes, nodes)#path nodes
-            graphMaker(numOfNodes, True)
+            graphMaker(numOfNodes, True) #  
 
     else:
         pygame.draw.rect(screen, White, DFS_mazeR)
@@ -162,7 +162,7 @@ while running:
         for j in range(numOfNodes):
             pygame.draw.rect(screen, nodes[(i,j)].color, nodes[(i,j)].rect)
     
-    pygame.display.flip()
+    pygame.display.update()
     pygame.time.delay(int((1/FPS)*1000))
 
 pygame.quit()
