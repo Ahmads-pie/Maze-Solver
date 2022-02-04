@@ -1,19 +1,22 @@
+import random
 Black = (0, 0, 0)
 numOfNodes = None
 nodes = None
-def neighbors(node):
-    neighbors_list = []
-    if node[0] > 0 and nodes[(node[0]-1, node[1])].color != Black:
-        neighbors_list.append((node[0]-1, node[1]))
-    
-    if node[1] > 0 and  nodes[(node[0], node[1]-1)].color != Black:
-        neighbors_list.append((node[0], node[1]-1))
-    
-    if node[0] < numOfNodes-1 and nodes[(node[0]+1, node[1])].color != Black:
-        neighbors_list.append((node[0]+1, node[1]))
 
-    if node[1] < numOfNodes-1 and nodes[(node[0], node[1]+1)].color != Black:
-        neighbors_list.append((node[0], node[1]+1))
+def neighbors(node, shuffle=False, maze = False):
+    neighbors_list = []
+    b = 1
+    if maze:
+        b = 2
+    for i in range(-1, 2, 2):
+        if 0 <= node[0]+i*b < numOfNodes:
+            neighbors_list.append((node[0]+i*b, node[1]))
+    for i in range(-1, 2, 2):
+        if 0 <= node[1]+i*b < numOfNodes:
+            neighbors_list.append((node[0], node[1]+i*b))
+    if shuffle:
+        random.shuffle(neighbors_list)
+
     return neighbors_list
 
 def BFS(i, f, o_numOfNodes, o_nodes):
@@ -61,42 +64,31 @@ def DFS(i, f, o_numOfNodes, o_nodes):
             path.append(i)
             return True, visited, path
         
-        for neighbor in neighbors(node):
+        for neighbor in neighbors(node, True):
             if neighbor not in visited and neighbor not in queue and nodes[neighbor].color != (0,0,0):
                 queue.append(neighbor)
                 parents[neighbor] = node
     
     return visited
 
-
-def allowed(node, parent, maze):
-    for n in neighbors(node):
-        if n in maze and n != parent:
-            return False
-    
-    allowed_nodes = []
-    for i in range(-1,2,2):
-        for j in range(-1,2,2):
-            if node[i] > 0 and node[j] > 0 and node[i] < numOfNodes-1 and node[j] < numOfNodes-1:
-                allowed_nodes.append((node[i], node[j]))
-    
-    for n in allowed_nodes:
-        if n in maze:
-            return False
-    
-    return True
-
+def sign(num):
+    if num > 0:
+        return 1
+    if num < 0:
+        return -1
+    return 0
 
 def DFS_maze(o_numOfNodes, o_nodes):
     global numOfNodes, nodes
     numOfNodes = o_numOfNodes
     nodes = o_nodes
-    queue = [(0,0)]
+    queue = [(0, 0)]
     maze = []
     while len(queue) > 0:
         node = queue.pop()
-        for n in neighbors(node): # n: neighbor
-            if allowed(n, node, maze):
-                queue.append(n)
-                maze.append(n)
+        for neighbor in neighbors(node, True, True):
+            if neighbor not in maze and neighbor not in queue:
+                queue.append(neighbor)
+                maze.append((sign(node[0]-neighbor[0])+(neighbor[0]), sign(node[1]-neighbor[1])+neighbor[1]))
+                maze.append(neighbor)
     return maze
